@@ -7,17 +7,18 @@ def checkFile( filename ):
             return True
     return False
 
-def readByLines( filename ):
-    res=[]
+def readByLines( filename , contentlist):
+    contentlist.clear()
     if checkFile(filename): #file exists
         try:
             infile=open(filename,"r") #open file for reading
             infile.seek(0)              #move to start of file (defensive)
-            res=list(map(lambda x: x.strip(),infile.readlines()))      #load text lines in resulting list, remove newlines and any spaces
+            contentlist+=list(map(lambda x: x.strip(),infile.readlines()))      #load text lines in resulting list, remove newlines and any spaces
             infile.close()
+            return True
         except:
             pass    #placeholder
-    return res
+    return False
 
 
 
