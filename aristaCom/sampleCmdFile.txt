@@ -1,0 +1,3 @@
+show interfaces
+show ntp status
+show run

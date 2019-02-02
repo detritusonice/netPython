@@ -20,9 +20,9 @@ if not (fileTools.readByLines(userFile,credentials) and
     print('Failed to read config files, exiting...')
     sys.exit()
 
-print(credentials)
-print(hosts)
-print(commands)
+#print(credentials)
+#print(hosts)
+#print(commands)
 
 unreachable=[]
 

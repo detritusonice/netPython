@@ -1,2 +1,0 @@
-dir
-echo 'insert some arista switch commands'
