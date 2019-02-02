@@ -10,9 +10,9 @@ credentials=[]
 hosts=[]
 commands=[]
 
-userFile = 'userfile.txt'#input('Which file contains user credentials?')
-hostFile = 'addressfile.txt'#input('Host IP address file:')
-cmdFile = 'commandfile.txt' #input('Arista switch commands file:')
+userFile = input('Which file contains user credentials?')
+hostFile = input('Host IP address file:')
+cmdFile = input('Arista switch commands file:')
 
 if not (fileTools.readByLines(userFile,credentials) and 
    fileTools.readByLines(hostFile,hosts) and
@@ -30,16 +30,16 @@ for h in hosts:
     print('Trying to reach',h,'...')
     if not ipTools.ping(h):
         unreachable.append(h)
-        print('Node %s did not respond.'.(h))
+        print('Node %s did not respond.'%(h))
     else:
-        print('Node %s reached.'.(h))
+        print('Node %s reached.'%(h))
 
 for h in unreachable:
     print('removing unreachable host {} from host list'.format(h))
     hosts.remove(h)
 
+print('Starting ssh connection...')
 threads=threadTools.startThreads(sshConnect.sshConnect,hosts,[credentials,commands])
 threadTools.waitThreads(threads)
-
 print('Done')
 

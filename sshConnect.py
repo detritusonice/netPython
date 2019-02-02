@@ -1,5 +1,6 @@
 import time
 import paramiko
+import re
 
 def sendCommand( terminalSession, cmdString ,sleepPeriod=1):
     terminalSession.send(cmdString.strip()+'\n')
@@ -25,7 +26,7 @@ def sshConnect( hostaddr, credentials, commands ):
     try:
         session= paramiko.SSHClient()
         
-        session.set_missing_host_key_policy(paramiko.client.WarningPolicy()) #warn if unknown keys are encountered
+        session.set_missing_host_key_policy(paramiko.client.AutoAddPolicy())#WarningPolicy()) #warn if unknown keys are encountered
 
         session.connect( hostaddr, username=credentials[0], password=credentials[1])
 
@@ -52,7 +53,7 @@ def sshConnect( hostaddr, credentials, commands ):
         term.close()
         session.close()
 
-    except:
-        print("exception raised by authentication or network subsystem\n")
+    except paramiko.AuthenticationException as e:
+        print("exception raised by authentication or network subsystem\n"+e.text)
         return False
     return True
