@@ -1,17 +1,16 @@
 import random
 import ipTools
 
-def ipv4ToInt( address ):
-    """create an integer bitmask from an ipv4 address string"""
+def IPv4ToInt( address ):
+    """create an integer bitmask from an IPv4 address string"""
     if ipTools.verifyIPv4( address ):
         octets=list(map(int,address.split('.')))
-        print(octets)
         num=octets[0]<<24 | octets[1]<<16 | octets[2]<<8 | octets[3]
         return num
     return 0
 
-def intToipv4( num ):
-    """create an ipv4 address string from an integer bitmask"""
+def intToIPv4( num ):
+    """create an IPv4 address string from an integer bitmask"""
     addr=''
     for i in range(4):
         byte=(num>>(24-i*8))&255
@@ -26,9 +25,9 @@ def binInverse( num , length=32 ):
 
 def subnetIPv4( address, subnetMask ):
     """given an address and its subnet mask return a string containing the subnet address"""
-    adr= ipv4ToInt(address)
-    msk= ipv4ToInt(subnetMask)
-    return IntToipv4(adr&msk)
+    adr= IPv4ToInt(address)
+    msk= IPv4ToInt(subnetMask)
+    return intToIPv4(adr&msk)
 
 def randomMaskedNum( intWildCardMask ) :
     """given a wildcard mask in bitmask integer form, return a random number using the mask's  set bits"""
@@ -38,11 +37,11 @@ def randomMaskedNum( intWildCardMask ) :
     rnd=random.randint(1,intWildCardMask-reduct) #this is the max number we need, do not generate 25a
     return rnd & intWildCardMask 
 
-def randomSubnetIPv4( subnet, subnetMask ):
+def randomSubnetIPv4( subnet, wildcardMask ):
     """given a subnet address and a subnet mask address in string form, return a random address
         for this subnet, not broadcast"""
-    net= ipv4ToInt(subnet)
-    mask= ipv4ToInt(subnetMask)
+    net= IPv4ToInt(subnet)
+    mask= IPv4ToInt(wildcardMask)
 
-    newaddr= net | ( randomMaskedNum( binInverse(mask)))
-    return intToipv4(newaddr)
+    newaddr= net | ( randomMaskedNum(mask))
+    return intToIPv4(newaddr)
