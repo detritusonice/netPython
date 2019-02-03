@@ -19,6 +19,14 @@ def intToIPv4( num ):
             addr+='.'
     return addr
 
+def isValidSubnetMask( mask ):
+    """the binary form of subnet mask must consist of all ones followed by all zeros"""
+    binMask = IPv4ToInt(mask)
+    maskInverse= binInverse(binMask)
+    if maskInverse>0 and ( maskInverse & (maskInverse+1))==0: #this happens only when a number is (some power of 2) -1
+        return True
+    return False
+
 def binInverse( num , length=32 ):
     """return the number having inverted bits"""
     return num^( (1<<length)-1) # (1<<32)-1 is a mask of all 32 ones, xor(^) to num to invert digits

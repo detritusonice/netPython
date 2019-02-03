@@ -41,7 +41,11 @@ for h in unreachable:
     hosts.remove(h)
 
 print('Starting ssh connection...')
-threads=threadTools.startThreads(sshConnect.sshConnect,hosts,[credentials,commands])
-threadTools.waitThreads(threads)
+try:
+    threads=threadTools.startThreads(sshConnect.sshConnect,hosts,[credentials,commands])
+    threadTools.waitThreads(threads)
+except KeyboardInterrupt:
+    print('Excecution aborted by the user...')
+    sys.exit()
 print('Done')
 
