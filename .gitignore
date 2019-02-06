@@ -3,3 +3,4 @@ __pycache__/*
 aristaCom/addressfile.txt
 aristaCom/userfile.txt
 aristaCom/commandfile.txt
+aristaCom/usagecommands.txt

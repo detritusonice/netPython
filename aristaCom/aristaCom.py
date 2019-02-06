@@ -8,44 +8,68 @@ import ipTools
 import sshConnect
 import threadTools
 
-credentials=[]
-hosts=[]
-commands=[]
+def aristaCom(userFile,hostFile,cmdFile,cycles,delay,showfeedback,sshfeedbackAction,loopEndAction,finalAction):
+    """3 file names, number of cycles to perform, 0 is infinite, delay between cycles
+        feedback/silent, action to send to ssh connection thread function, action to perform
+        after cycles have been performed."""
 
-userFile = input('Which file contains user credentials?')
-hostFile = input('Host IP address file:')
-cmdFile = input('Arista switch commands file:')
+    credentials=[]
+    hosts=[]
+    commands=[]
 
-if not (fileTools.readByLines(userFile,credentials) and 
-   fileTools.readByLines(hostFile,hosts) and
-   fileTools.readByLines(cmdFile,commands)):
-    print('Failed to read config files, exiting...')
-    sys.exit()
+    if userFile=='':
+        userFile = input('Which file contains user credentials?')
+    if hostFile=='':
+        hostFile = input('Host IP address file:')
+    if cmdFile=='':
+        cmdFile = input('Arista switch commands file:')
 
-#print(credentials)
-#print(hosts)
-#print(commands)
+    if not (fileTools.readByLines(userFile,credentials) and 
+       fileTools.readByLines(hostFile,hosts) and
+       fileTools.readByLines(cmdFile,commands)):
+        print('Failed to read config files, exiting...')
+        return False
 
-unreachable=[]
+    unreachable=[]
 
-for h in hosts:
-    print('Trying to reach',h,'...')
-    if not ipTools.ping(h):
-        unreachable.append(h)
-        print('Node %s did not respond.'%(h))
+    for h in hosts:
+        print('Trying to reach',h,'...')
+        if not ipTools.ping(h):
+            unreachable.append(h)
+            print('Node %s did not respond.'%(h))
+        else:
+            print('Node %s reached.'%(h))
+
+    for h in unreachable:
+        print('removing unreachable host {} from host list'.format(h))
+        hosts.remove(h)
+
+    print('Starting ssh connection...')
+
+    if cycles==0:
+        step=0
     else:
-        print('Node %s reached.'%(h))
+        step=1
+        cycles-=1
+    try:
+        while cycles>=0:
+            threads=threadTools.startThreads(sshConnect.sshConnect,hosts,[credentials,commands,showfeedback,sshfeedbackAction])
+            threadTools.waitThreads(threads)
+            if loopEndAction!=None:
+                loopEndAction()
+            cycles-=step
 
-for h in unreachable:
-    print('removing unreachable host {} from host list'.format(h))
-    hosts.remove(h)
+    except KeyboardInterrupt:
+        print('Excecution aborted by the user...')
 
-print('Starting ssh connection...')
-try:
-    threads=threadTools.startThreads(sshConnect.sshConnect,hosts,[credentials,commands])
-    threadTools.waitThreads(threads)
-except KeyboardInterrupt:
-    print('Excecution aborted by the user...')
-    sys.exit()
-print('Done')
+    if finalAction!=None:
+        finalAction()
+    print('Done')
+
+
+def execModule():
+    aristaCom('','','',1,0,True,None,None,None)
+
+if __name__=="__main__":
+    execModule()
 

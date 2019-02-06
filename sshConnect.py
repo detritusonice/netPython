@@ -6,7 +6,7 @@ def sendCommand( terminalSession, cmdString ,sleepPeriod=1):
     terminalSession.send(cmdString.strip()+'\n')
     time.sleep(sleepPeriod)
 
-def sshConnect( hostaddr, credentials, commands ):
+def sshConnect( hostaddr, credentials, commands, showFeedback, feedbackAction ):
     """perform an ssh connection to hostaddr, using provided credentials and passing given commands"""
     #prepare strings if not already
     hostaddr.strip()
@@ -39,16 +39,17 @@ def sshConnect( hostaddr, credentials, commands ):
         for cmd in commands:
             sendCommand(term,cmd,2)
 
-        feedback= str(term.recv(65535))
+        feedback= term.recv(65535).decode("utf-8")
 
         if re.search("invalid input", feedback):
             print("IOS Syntax errors in command file for device {}:\n\n".format(hostaddr))
-        elif re.search("(?i)error",feedback):
-            print("IOS Errors found in output from device {}:\n\n".format(hostaddr))
-        else:
+        elif showFeedback:
             print("All done. No erros. Feedback from device {} was:\n\n".format(hostaddr))
 
-        print(feedback+'\n\n')
+        if feedbackAction!=None:
+            feedbackAction(feedback)
+        if showFeedback:
+            print(feedback+'\n\n')
 
         term.close()
         session.close()
