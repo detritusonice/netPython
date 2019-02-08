@@ -4,3 +4,4 @@ aristaCom/addressfile.txt
 aristaCom/userfile.txt
 aristaCom/commandfile.txt
 aristaCom/usagecommands.txt
+aristaCom/*.dat

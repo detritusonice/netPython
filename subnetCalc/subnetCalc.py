@@ -36,7 +36,7 @@ if answer=='y':
     #must be a valid ip address and have a subset of the set bits of max Wildcard
     while not ( ipTools.verifyIPv4(userWildStr) and userWild>0 and (userWild & maxWild)==userWild):
         userWildStr=input('Please insert a valid wildcard mask:')
-        userWild=ipTransforms.IPv4ToInt(userWildStr)
+    userWild=ipTransforms.IPv4ToInt(userWildStr)
 else:
     userWild=maxWild
     userWildStr=maxWildStr
